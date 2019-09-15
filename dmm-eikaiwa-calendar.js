@@ -45,7 +45,7 @@ function registDmmCalendar() {
 
             for (var k = 0; k < splitedBody.length; k++) {
                 // メール本文にDMM英会話のレッスン予約完了の旨が書いてあるかの確認を行う
-                if (splitedBody[k].indexOf(BODY_SEARCH_QUERY) != -1) {
+                if (splitedBody[k].indexOf(BODY_SEARCH_QUERY) !== -1) {
 
                     Logger.log("i:" + i);
                     Logger.log("j:" + j);
@@ -103,7 +103,7 @@ function _addToCalendar(calendar, content, date, time) {
     var exsists = false;
 
     // 既存のイベントに存在するか確認する
-    for (let l = 0; l < eventsForDay.length; l++) {
+    for (var l = 0; l < eventsForDay.length; l++) {
         // 存在したらフラグを立ててループを抜ける
         Logger.log('Title: ' + eventsForDay[l].getTitle());
         Logger.log('content: ' + content);
