@@ -15,6 +15,7 @@ var MAIL_SEARCH_QUERY = 'newer_than:1d subject:"【DMM英会話】レッスン�
 var BODY_SEARCH_QUERY = '■　英会話 レッスン予約完了のお知らせ';
 
 var EVENT_TITLE = '【DMM英会話】';
+var MY_NAME = "XXX";
 
 function registDmmCalendar() {
 
@@ -47,36 +48,23 @@ function registDmmCalendar() {
                 // メール本文にDMM英会話のレッスン予約完了の旨が書いてあるかの確認を行う
                 if (splitedBody[k].indexOf(BODY_SEARCH_QUERY) !== -1) {
 
-                    Logger.log("i:" + i);
-                    Logger.log("j:" + j);
-                    Logger.log("k:" + k);
+                    // フォーマット
+                    // "XXX様、2019/mm/dd HH:MMのXXXXとのレッスン予約が完了しました。レッスン開始の数分前にレッスンに参加してください。"
+                    var str = splitedBody[k+4];
 
-                    // 講師名（skype名）
-                    var str = splitedBody[k + 2];
-                    var teacher_name = str.match(/講師名：([\s\.0-9a-zA-Z]+)/);
-                    Logger.log(str + " -> " + teacher_name[1]);
+                    // 文頭の自分の名前を削除
+                    // -> "様、2019/mm/dd HH:MMのXXXXとのレッスン予約が完了しました。レッスン開始の数分前にレッスンに参加してください。"
+                    str = str.replace(MY_NAME, "");
 
-                    var str = splitedBody[k + 3];
-                    var teacher_skype = str.match(/講師Skype名：([\s\.0-9a-zA-Z]+)/);
-                    Logger.log(str + " -> " + teacher_skype[1]);
+                    // 取得
+                    var time = str.match(/(\d){2}\:(\d){2}/)[0];
+                    var teacher_name = str.match(/[a-zA-Z]+/)[0];
+                    var date = str.match(/(\d){4}.(\d+){2}.(\d+){2}/)[0];
 
-                    // 予約日
-                    str = splitedBody[k + 4];
-                    var date = str.match(/(\d+)年+(\d+)月+(\d+)日/);
-                    Logger.log(str + " -> " + date[1] + date[2] + date[3]);
+                    var content = EVENT_TITLE + " " + teacher_name + " (" + time + ")";
 
-                    // 開始時間
-                    str = splitedBody[k + 5];
-                    // var time = str.replace(/(\d+)時+(\d+)分/g, "$1:$2" );
-                    var time = str.match(/(\d+)時+(\d+)分/);
-                    Logger.log(str + " -> " + time[1] + time[2]);
-
-                    var content = EVENT_TITLE + " " + teacher_name[1] + " (" + time[1] + ":" + time[2] + ")";
-                    var date_arg = date[1] + "/" + date[2] + "/" + date[3];
-                    var time_arg = time[1] + ":" + time[2];
                     // カレンダーに追加する
-                    _addToCalendar(calendar, content, date_arg, time_arg);
-
+                     _addToCalendar(calendar, content, date, time);
                     break;
                 }
             }
